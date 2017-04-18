@@ -2,9 +2,9 @@ import numpy as np
 import pytest as pt
 from numpy.testing import assert_allclose
 
-import lonpl as lp
-from lonpl.postprocessing import rand_angles
-from lonpl.ccg_haar import unitary_haar
+import pypllon as lp
+from pypllon.postprocessing import rand_angles
+from pypllon.ccg_haar import unitary_haar
 
 
 @pt.mark.parametrize('mode', ['cols_by_first', 'cols_by_max',

@@ -7,22 +7,22 @@ import sys
 from setuptools import setup
 
 try:
-    sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/lonpl")
-    from lonpl import __version__ as version
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/pypllon")
+    from pypllon import __version__ as version
 except:
     version = "unknown"
 
 
 if __name__ == '__main__':
     setup(
-        name='lonpl',
+        name='pypllon',
         author='Daniel Suess',
         author_email='daniel@dsuess.me',
-        url='https://github.com/dseuss/lonpl',
+        url='https://github.com/dseuss/pypllon',
         version=version,
         description="Characterising linear optical networks via PhaseLift",
-        packages=['lonpl'],
-        package_dir={'lonpl': 'lonpl'},
+        packages=['pypllon'],
+        package_dir={'pypllon': 'pypllon'},
         license="BSD",
         install_requires=['numpy', 'scipy', 'cvxpy', 'autograd', 'six'],
         tests_require=['pytest==3.0.3', 'pytest-warnings'],

@@ -1,5 +1,5 @@
 import numpy as np
-import lonpl as lp
+import pypllon as lp
 import pytest as pt
 
 from numpy.testing import assert_allclose

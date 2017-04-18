@@ -1,7 +1,7 @@
 import pytest as pt
 
-import lonpl as lp
-import lonpl.experiment as exp
+import pypllon as lp
+import pypllon.experiment as exp
 
 
 @pt.mark.parametrize('ensemble', [lp.invecs_gaussian, lp.invecs_recr])

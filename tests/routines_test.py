@@ -3,8 +3,8 @@ import pytest as pt
 from numpy.testing import assert_allclose
 from scipy.linalg import dft
 
-import lonpl as lp
-from lonpl.ccg_haar import unitary_haar
+import pypllon as lp
+from pypllon.ccg_haar import unitary_haar
 
 
 def target_unitaries():
