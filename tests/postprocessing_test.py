@@ -29,3 +29,13 @@ def test_fix_phases_identity(rgen):
     new = np.dot(np.diag(phases), target)
     target_, new_ = lp.fix_phases('rows_by_max', target, new)
     assert_allclose(target_, new_)
+
+
+@pt.mark.parametrize('dim', [5, 10, 15])
+@pt.mark.parametrize('ensemble', [lp.invecs_gaussian, lp.invecs_recr])
+def test_best_invec_phase(dim, ensemble, rgen):
+    x, *_ = ensemble(dim, 1, normalized=True, rgen=rgen)
+    y = np.exp(1.j * rand_angles()) * x
+    y_, dist = lp.postprocessing.best_invec_phase(x, y)
+    assert_allclose(dist, 0, atol=1e-5)
+    assert_allclose(y_, x, atol=1e-5)

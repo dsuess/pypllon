@@ -13,7 +13,7 @@ except ImportError:
     from warnings import warn
     warn("Package autograd not found. Only limited functionality available.")
 
-__all__ = ['rank1_approx', 'fix_phases']
+__all__ = ['rank1_approx', 'fix_phases', 'best_invec_phase', 'best_tmat_phases']
 
 
 def rank1_approx(mat, reterr=False):
@@ -71,16 +71,15 @@ def rand_angles(*args, rgen=np.random):
     return 2 * np.pi * rgen.uniform(size=args)
 
 
-def best_normalization(A, B, **kwargs):
+def best_tmat_phases(A, B, **kwargs):
     """Finds the angles `phi` and `psi` that minimize the Frobenius distance
     between A and B', where
 
-        B' = diag(exp(i phi)) @ B @ diag(exp(i psi))
+    .. math::
 
-    :param A: @todo
-    :param B: @todo
-    :returns: @todo
+        B' = \mathrm{diag}(\mathrm{exp}(i \phi)) B \mathrm{diag}(\mathrm{exp}(i \psi))
 
+    :returns: Optimal value `B'` as well as minimal Frobenius distance
     """
     d = len(A)
     diagp = lambda phi: np.diag(np.exp(1.j * phi))
@@ -88,7 +87,7 @@ def best_normalization(A, B, **kwargs):
     norm_sq = lambda x: np.real(np.dot(np.conj(x.ravel()), x.ravel()))
     cost = lambda x: norm_sq(A - B_(x[:d], x[d:]))
 
-    init_angles = np.random.uniform(0.0, 2 * np.pi, 2 * d)
+    init_angles = rand_angles(2 * d)
     result = minimize(cost, init_angles, jac=grad(cost), **kwargs)
     phi, psi = result['x'][:d], result['x'][d:]
 
@@ -96,9 +95,21 @@ def best_normalization(A, B, **kwargs):
     return B_(phi, psi), result['fun'] / np.sqrt(2)
 
 
-def phasefree_dist(x, y, rety=False):
+def best_invec_phase(x, y, **kwargs):
+    """Computes the l2-distance between `x` and `y` up to a global phasefactor.
+
+    .. math::
+
+        \min_\phi \Vert x - \mathrm{e}^{i \phi} y \Vert_2
+
+    :param x, y: Input vectors of same length
+    :param kwargs: Parameters passed to `scipy.optimize.minimize`
+    :returns: Minimal distane (and possibly optimal vector `y`)
+
+    """
     norm_sq = lambda x: np.real(np.dot(np.conj(x.ravel()), x.ravel()))
     cost = lambda phi: norm_sq(x - np.exp(1.j * phi) * y)
-    result = minimize(cost, np.random.uniform(0, 2 * np.pi), jac=grad(cost))
+    # Choose initialization randomly to evade maximimum at opposite side
+    result = minimize(cost, rand_angles(), jac=grad(cost), **kwargs)
     y_ = np.exp(1.j * result['x']) * y
-    return result['fun'] if not rety else result['fun'], y_
+    return y_, result['fun']
