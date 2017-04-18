@@ -21,3 +21,11 @@ def test_fix_phases(mode, rgen):
         assert_allclose(new_[0].imag, 0, atol=1e-15)
     elif mode == 'rows_by_first':
         assert_allclose(new_[:, 0].imag, 0, atol=1e-15)
+
+
+def test_fix_phases_identity(rgen):
+    target = np.eye(10)
+    phases = np.exp(1.j * rand_angles(len(target), rgen=rgen))
+    new = np.dot(np.diag(phases), target)
+    target_, new_ = lp.fix_phases('rows_by_max', target, new)
+    assert_allclose(target_, new_)
