@@ -10,6 +10,9 @@ from scipy.linalg import block_diag
 from scipy.optimize import minimize
 
 
+__all__ = ['invec_to_phases', 'phases_to_invec']
+
+
 def phase_shifter(dim, alpha, mode):
     diag_elems = mode * [1] + [np.exp(1.j * alpha)] + (dim - mode - 1) * [1]
     return np.diag(diag_elems)
