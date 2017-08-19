@@ -9,8 +9,11 @@ import numpy as np
 import pandas as pd
 from sympy.parsing.mathematica import mathematica
 
+try:
+    from tqdm import tqdm
+except ImportError:
+    tqdm = lambda iterator: iterator
 
-__all__ = ['parse_ctx', 'load_complex_array', 'load_simdata']
 
 
 def parse_ctx(fname):
@@ -56,7 +59,7 @@ def load_simdata(infile):
     for col, dtype in columns.items():
         df[col] = df[col].astype(dtype)
 
-    for dimgroup in infile.values():
+    for dimgroup in tqdm(infile.values()):
         dim = dimgroup.attrs['DIM']
         tmats = {name: value.value
                  for name, value in dimgroup['TARGETS'].items()}
