@@ -1,7 +1,6 @@
 #!/bin/bash
 
 module load openmpi
-source activate cvxpy
 
 TARGET=$(readlink -f "${1}")
 OUTPUTDIR=$(readlink -f "${2}")
@@ -28,7 +27,7 @@ sleep 30
 
 echo "Launching job"
 RUNFILE=$(basename "${TARGET}")
-jupyter-nbconvert --to html --ExecutePreprocessor.enabled=True --ExecutePreprocessor.timeout=600000 "${RUNFILE}"
+python "${RUNFILE}"
 echo "Done. Shutting done the server"
 ipcontroller stop --cluster-id="${CLUSTER_ID}" &
 sleep 10
