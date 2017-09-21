@@ -71,7 +71,7 @@ def rand_angles(*args, rgen=np.random):
     return 2 * np.pi * rgen.uniform(size=args)
 
 
-def best_tmat_phases(A, B, **kwargs):
+def best_tmat_phases(A, B, cols=True, rows=True, **kwargs):
     """Finds the angles `phi` and `psi` that minimize the Frobenius distance
     between A and B', where
 
@@ -85,11 +85,27 @@ def best_tmat_phases(A, B, **kwargs):
     diagp = lambda phi: np.diag(np.exp(1.j * phi))
     B_ = lambda phi, psi: np.dot(diagp(phi), np.dot(B, diagp(psi)))
     norm_sq = lambda x: np.real(np.dot(np.conj(x.ravel()), x.ravel()))
-    cost = lambda x: norm_sq(A - B_(x[:d], x[d:]))
 
-    init_angles = rand_angles(2 * d)
+    if cols and rows:
+        cost = lambda x: norm_sq(A - B_(x[:d], x[d:]))
+        init_angles = rand_angles(2 * d)
+    elif rows:
+        cost = lambda x: norm_sq(A - B_(x, np.zeros(d)))
+        init_angles = rand_angles(d)
+    elif cols:
+        cost = lambda x: norm_sq(A - B_(np.zeros(d), x))
+        init_angles = rand_angles(d)
+    else:
+        raise ValueError('Either rows or cols should be true')
+
     result = minimize(cost, init_angles, jac=grad(cost), **kwargs)
-    phi, psi = result['x'][:d], result['x'][d:]
+
+    if cols and rows:
+        phi, psi = result['x'][:d], result['x'][d:]
+    elif rows:
+        phi, psi = result['x'], np.zeros(d)
+    elif cols:
+        phi, psi = np.zeros(d), result['x']
 
     # Normalization 1 / np.sqrt(2) due to real embedding
     return B_(phi, psi), result['fun'] / np.sqrt(2)
