@@ -40,6 +40,7 @@ def load_complex_array(fname):
     def convert(s):
         s = s.replace(b'(', b'').replace(b')', b'')
         s = s.replace(b'^', b'10^')
+        s = s.replace(b'e', b'*10^')
         return complex(mathematica(s.decode('utf-8')))
 
     with open(fname, 'r') as buf:
